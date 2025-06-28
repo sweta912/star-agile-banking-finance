@@ -5,9 +5,10 @@ provider "aws" {
 # Locals
 locals {
   ami_id        = "ami-0b05d988257befbbe" # Amazon Linux 2
-  instance_type = "t2.medium"
+  instance_type = "t2.micro"
   key_name      = "my_key"
 
+ 
   instances = {
     jenkins_master     = {}
     jenkins_slave      = {}
@@ -83,10 +84,18 @@ resource "aws_instance" "instances" {
   vpc_security_group_ids      = [aws_security_group.allow_all.id]
   associate_public_ip_address = true
 
+
+lifecycle {
+    prevent_destroy = true
+  }
+
+
   tags = {
     Name = title(replace(each.key, "_", " "))
   }
 }
+
+ 
 
 # Output Public IPs
 output "instance_ips" {
